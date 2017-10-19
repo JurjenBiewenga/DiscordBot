@@ -18,8 +18,17 @@ namespace DiscordBot.Commands
         {
             this.service = service;
         }
-        
+
         [Command("Register")]
+        [Alias("Reg")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task Register(string code, SocketRole roleName)
+        {
+            await Register(code, roleName.Name);
+        }
+
+        [Command("Register")]
+        [Alias("Reg")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Register(string code, string roleName)
         {
@@ -57,6 +66,33 @@ namespace DiscordBot.Commands
                 }
                 await ReplyAsync("No invite link with that code found");
             }
+        }
+
+        [Command("ListRoleLinks")]
+        [Alias("LRL", "l")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task List()
+        {
+            var guild = service.discord.Guilds.FirstOrDefault();
+            var links = Config.GetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
+            string output = "";
+            foreach (InviteRoleLink inviteRoleLink in links)
+            {
+                output += inviteRoleLink.inviteCode + " : " + guild.GetRole(inviteRoleLink.roleId) + System.Environment.NewLine;
+            }
+
+            await ReplyAsync(output);
+        }
+
+        [Command("Remove")]
+        [Alias("Rem")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task Remove(string code)
+        {
+            var links = Config.GetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
+            links = links.Where(x => x.inviteCode != code).ToList();
+            Config.SetValue(links, "Data", "InviteRoleLinks");
+            await ReplyAsync("Succesfully removed " + code);
         }
     }
 }
