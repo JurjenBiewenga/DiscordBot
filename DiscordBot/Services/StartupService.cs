@@ -24,9 +24,12 @@ namespace DiscordBot.Services
 
         public async Task StartAsync()
         {
-            string discordToken = Config.GetValue("", "Account", "Token");     // Get the discord token from the config file
+            string discordToken = Config.GetValue("", "Account", "Token");
             if (string.IsNullOrWhiteSpace(discordToken))
+            {
+                Config.SetValue("Insert token here", "Account", "Token");
                 throw new Exception("Please enter your bot's token into the `Config.json` file found in the applications root directory.");
+            }
 
             discord.Log += Log;
             
