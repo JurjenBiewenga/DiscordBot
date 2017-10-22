@@ -118,6 +118,8 @@ namespace DiscordBot.Commands
             newLinks.AddRange(links);
             Config.SetValue(newLinks, "Data", Context.Guild.Id.ToString(), "InviteRoleLinks");
             Config.SetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
+            
+            await ReplyAsync("Succesfully converted existing invite links");
         }
     }
 }
