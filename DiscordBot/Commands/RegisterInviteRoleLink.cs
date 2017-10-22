@@ -45,7 +45,7 @@ namespace DiscordBot.Commands
                 {
                     if (restInviteMetadata.Code == code)
                     {
-                        var links = Config.GetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
+                        var links = Config.GetValue(new List<InviteRoleLink>(), "Data",  Context.Guild.Id.ToString(), "InviteRoleLinks");
                         SocketRole first = null;
                         foreach (SocketRole x in guild.Roles)
                         {
@@ -64,7 +64,7 @@ namespace DiscordBot.Commands
                         
                         var link = new InviteRoleLink(code, restInviteMetadata.Uses, first.Id);
                         links.Add(link);
-                        Config.SetValue(links, "Data", "InviteRoleLinks");
+                        Config.SetValue(links, "Data", Context.Guild.Id.ToString(), "InviteRoleLinks");
                         await ReplyAsync("Succesfully registered");
                         return;
                     }
@@ -80,13 +80,18 @@ namespace DiscordBot.Commands
         public async Task List()
         {
             var guild = Context.Guild;
-            var links = Config.GetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
+            var links = Config.GetValue(new List<InviteRoleLink>(), "Data",  Context.Guild.Id.ToString(), "InviteRoleLinks");
             string output = "";
             foreach (InviteRoleLink inviteRoleLink in links)
             {
                 output += inviteRoleLink.inviteCode + " : " + guild.GetRole(inviteRoleLink.roleId) + System.Environment.NewLine;
             }
 
+            if (string.IsNullOrWhiteSpace(output))
+            {
+                await ReplyAsync("No registered invite links found");
+                return;
+            }
             await ReplyAsync(output);
         }
 
@@ -96,24 +101,23 @@ namespace DiscordBot.Commands
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task Remove(string code)
         {
-            var links = Config.GetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
+            var links = Config.GetValue(new List<InviteRoleLink>(), "Data",  Context.Guild.Id.ToString(), "InviteRoleLinks");
             links = links.Where(x => x.inviteCode != code).ToList();
-            Config.SetValue(links, "Data", "InviteRoleLinks");
+            Config.SetValue(links, "Data",  Context.Guild.Id.ToString(), "InviteRoleLinks");
             await ReplyAsync("Succesfully removed " + code);
         }
-
-        [Command("Help")]
-        [Alias("h")]
-        [Summary("Lists all available commands")]
-        public async Task Help()
+        
+        [Command("Convert")]
+        [Alias("c")]
+        [Summary("Converts invite links to the new format")]
+        [RequireUserPermission(GuildPermission.Administrator)]
+        public async Task ConvertToNewFormat()
         {
-            string helpText = "Available commands: " + System.Environment.NewLine;
-            var distinct = commandService.Commands.GroupBy(x => x.Name).Select(x => x.First());
-            foreach (CommandInfo commandServiceCommand in distinct)
-            {
-                helpText += commandServiceCommand.Name + " : " + commandServiceCommand.Summary + System.Environment.NewLine;
-            }
-            await ReplyAsync(helpText);
+            var links = Config.GetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
+            var newLinks = Config.GetValue(new List<InviteRoleLink>(), "Data", Context.Guild.Id.ToString(), "InviteRoleLinks");
+            newLinks.AddRange(links);
+            Config.SetValue(newLinks, "Data", Context.Guild.Id.ToString(), "InviteRoleLinks");
+            Config.SetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
         }
     }
 }

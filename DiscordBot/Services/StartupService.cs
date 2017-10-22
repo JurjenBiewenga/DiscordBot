@@ -43,7 +43,7 @@ namespace DiscordBot.Services
 
         private async Task OnUserJoined(SocketGuildUser socketGuildUser)
         {
-            var links = Config.GetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
+            var links = Config.GetValue(new List<InviteRoleLink>(), "Data" ,socketGuildUser.Guild.Id.ToString(), "InviteRoleLinks");
             foreach (InviteRoleLink inviteLink in links)
             {
                 var guild = socketGuildUser.Guild;
@@ -54,7 +54,7 @@ namespace DiscordBot.Services
                     {
                         await socketGuildUser.AddRoleAsync(guild.GetRole(inviteLink.roleId));
                         inviteLink.inviteUsageCount = restInviteMetadata.Uses;
-                        Config.SetValue(links, "Data", "InviteRoleLinks");
+                        Config.SetValue(links, "Data", socketGuildUser.Guild.Id.ToString(), "InviteRoleLinks");
                         return;
                     }
                 }
