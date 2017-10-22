@@ -32,7 +32,7 @@ namespace DiscordBot.Services
             var context = new SocketCommandContext(discord, msg);     // Create the command context
 
             int argPos = 0;     // Check if the message has a valid command prefix
-            if (msg.HasStringPrefix("!", ref argPos) || msg.HasMentionPrefix(discord.CurrentUser, ref argPos))
+            if (msg.HasStringPrefix(Config.GetValue("!", "Data", "Prefix"), ref argPos) || msg.HasMentionPrefix(discord.CurrentUser, ref argPos))
             {
                 var result = await commands.ExecuteAsync(context, argPos, provider);     // Execute the command
 
