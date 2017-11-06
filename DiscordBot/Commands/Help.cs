@@ -6,7 +6,6 @@ namespace DiscordBot.Commands
 {
     public class Help :  ModuleBase<SocketCommandContext>
     {
-        
         private readonly CommandService commandService;
 
         public Help(CommandService commandService)
