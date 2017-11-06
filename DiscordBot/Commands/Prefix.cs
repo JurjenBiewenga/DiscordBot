@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using DiscordBot.Services;
 
@@ -9,6 +10,7 @@ namespace DiscordBot.Commands
         [Command("SetPrefix")]
         [Alias("sp")]
         [Summary("Sets the prefix")]
+        [RequireUserPermission(GuildPermission.Administrator)]
         public async Task SetPrefix(string prefix)
         {
             Config.SetValue(prefix, "Data", "Prefix");
