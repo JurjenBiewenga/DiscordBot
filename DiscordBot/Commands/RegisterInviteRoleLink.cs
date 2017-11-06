@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -43,13 +44,13 @@ namespace DiscordBot.Commands
                 var invites = await guild.GetInvitesAsync();
                 foreach (RestInviteMetadata restInviteMetadata in invites)
                 {
-                    if (restInviteMetadata.Code == code)
+                    if (String.Compare(restInviteMetadata.Code, code, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         var links = Config.GetValue(new List<InviteRoleLink>(), "Data",  Context.Guild.Id.ToString(), "InviteRoleLinks");
                         SocketRole first = null;
                         foreach (SocketRole x in guild.Roles)
                         {
-                            if (x.Name == roleName)
+                            if (String.Compare(x.Name, roleName, StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 first = x;
                                 break;
@@ -81,6 +82,7 @@ namespace DiscordBot.Commands
         {
             var guild = Context.Guild;
             var links = Config.GetValue(new List<InviteRoleLink>(), "Data",  Context.Guild.Id.ToString(), "InviteRoleLinks");
+            links = links.OrderByDescending(x => guild.GetRole(x.roleId)).ToList();
             string output = "";
             foreach (InviteRoleLink inviteRoleLink in links)
             {
