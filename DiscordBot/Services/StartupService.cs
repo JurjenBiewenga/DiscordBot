@@ -52,10 +52,14 @@ namespace DiscordBot.Services
                 {
                     if (inviteLink.inviteUsageCount + 1 == restInviteMetadata.Uses && inviteLink.inviteCode == restInviteMetadata.Code)
                     {
-                        await socketGuildUser.AddRoleAsync(guild.GetRole(inviteLink.roleId));
-                        inviteLink.inviteUsageCount = restInviteMetadata.Uses;
-                        Config.SetValue(links, "Data", socketGuildUser.Guild.Id.ToString(), "InviteRoleLinks");
-                        return;
+                        SocketRole role = guild.GetRole(inviteLink.roleId);
+                        if (role.Name == inviteLink.roleName)
+                        {
+                            await socketGuildUser.AddRoleAsync(guild.GetRole(inviteLink.roleId));
+                            inviteLink.inviteUsageCount = restInviteMetadata.Uses;
+                            Config.SetValue(links, "Data", socketGuildUser.Guild.Id.ToString(), "InviteRoleLinks");
+                            return;
+                        }
                     }
                 }
             }

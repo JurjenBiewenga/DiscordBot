@@ -63,7 +63,7 @@ namespace DiscordBot.Commands
                             return;
                         }
                         
-                        var link = new InviteRoleLink(code, restInviteMetadata.Uses, first.Id);
+                        var link = new InviteRoleLink(roleName, code, restInviteMetadata.Uses, first.Id);
                         links.Add(link);
                         Config.SetValue(links, "Data", Context.Guild.Id.ToString(), "InviteRoleLinks");
                         await ReplyAsync("Succesfully registered");
@@ -115,11 +115,13 @@ namespace DiscordBot.Commands
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task ConvertToNewFormat()
         {
-            var links = Config.GetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
             var newLinks = Config.GetValue(new List<InviteRoleLink>(), "Data", Context.Guild.Id.ToString(), "InviteRoleLinks");
-            newLinks.AddRange(links);
+            foreach (InviteRoleLink inviteRoleLink in newLinks)
+            {
+                var role = Context.Guild.GetRole(inviteRoleLink.roleId);
+                inviteRoleLink.roleName = role.Name;
+            }
             Config.SetValue(newLinks, "Data", Context.Guild.Id.ToString(), "InviteRoleLinks");
-            Config.SetValue(new List<InviteRoleLink>(), "Data", "InviteRoleLinks");
             
             await ReplyAsync("Succesfully converted existing invite links");
         }
