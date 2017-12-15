@@ -26,7 +26,7 @@ namespace DiscordBot.Commands
         [Command("Register")]
         [Alias("Reg")]
         [Summary("Registers an invite code to a specific role, Users joining through code will automatically get assigned the role.")]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task Register(string code, SocketRole roleName)
         {
             await Register(code, roleName.Name);
@@ -35,7 +35,7 @@ namespace DiscordBot.Commands
         [Command("Register")]
         [Alias("Reg")]
         [Summary("Registers an invite code to a specific role, Users joining through code will automatically get assigned the role.")]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task Register(string code, string roleName)
         {
             var guild = Context.Guild;
@@ -77,7 +77,7 @@ namespace DiscordBot.Commands
         [Command("ListRoleLinks")]
         [Alias("LRL", "l")]
         [Summary("Lists all registered invite links")]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task List()
         {
             var guild = Context.Guild;
@@ -100,7 +100,7 @@ namespace DiscordBot.Commands
         [Command("Remove")]
         [Alias("Rem")]
         [Summary("Removes a registered invite link")]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task Remove(string code)
         {
             var links = Config.GetValue(new List<InviteRoleLink>(), "Data",  Context.Guild.Id.ToString(), "InviteRoleLinks");
@@ -112,7 +112,7 @@ namespace DiscordBot.Commands
         [Command("Convert")]
         [Alias("c")]
         [Summary("Converts invite links to the new format")]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task ConvertToNewFormat()
         {
             var newLinks = Config.GetValue(new List<InviteRoleLink>(), "Data", Context.Guild.Id.ToString(), "InviteRoleLinks");

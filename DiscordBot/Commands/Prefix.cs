@@ -10,7 +10,7 @@ namespace DiscordBot.Commands
         [Command("SetPrefix")]
         [Alias("sp")]
         [Summary("Sets the prefix")]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task SetPrefix(string prefix)
         {
             Config.SetValue(prefix, "Data", "Prefix");
